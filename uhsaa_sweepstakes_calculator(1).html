@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UHSAA State Speech &amp; Debate — Sweepstakes Points Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --surface-2: #F0EDE6;
+    --border: #E0DBD2;
+    --border-strong: #C8C2B8;
+    --text: #1A1814;
+    --text-muted: #6B6560;
+    --text-faint: #9C968F;
+    --accent: #1A3A5C;
+    --accent-light: #E8EFF7;
+    --accent-mid: #2D5F96;
+    --green: #2D5F3F;
+    --green-bg: #EAF2EC;
+    --amber: #7A4A10;
+    --amber-bg: #FBF0DC;
+    --red: #6B2020;
+    --red-bg: #F5E8E8;
+    --gray: #5A5550;
+    --gray-bg: #EEEBE6;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Header */
+  header {
+    background: var(--accent);
+    color: #fff;
+    padding: 2.5rem 2rem 2rem;
+    border-bottom: 3px solid #0F2540;
+  }
+  .header-inner {
+    max-width: 820px;
+    margin: 0 auto;
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #9BBCD6;
+    margin-bottom: 8px;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  header p {
+    font-size: 14px;
+    color: #9BBCD6;
+  }
+
+  /* Main */
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* Info banner */
+  .info-banner {
+    background: var(--accent-light);
+    border: 1px solid #C4D8EE;
+    border-left: 4px solid var(--accent-mid);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 2rem;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--accent);
+  }
+  .info-banner strong { font-weight: 600; }
+
+  /* Points reference table */
+  .ref-section { margin-bottom: 2rem; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 10px;
+  }
+  .ref-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .ref-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+  }
+  .ref-card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .ref-rows { display: flex; flex-direction: column; gap: 5px; }
+  .ref-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13.5px;
+  }
+  .ref-row-label { color: var(--text-muted); }
+  .ref-pts {
+    font-weight: 600;
+    font-size: 14px;
+    min-width: 28px;
+    text-align: right;
+  }
+  .pts-10 { color: var(--accent); }
+  .pts-6  { color: var(--green); }
+  .pts-5  { color: var(--accent); }
+  .pts-3  { color: var(--green); }
+  .pts-2  { color: var(--amber); }
+  .pts-1  { color: var(--amber); }
+  .pts-0  { color: var(--text-faint); }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 1rem;
+  }
+
+  /* Team name */
+  .team-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+  }
+  .team-row .field-group { flex: 1; }
+
+  /* Form elements */
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  label { font-size: 12px; font-weight: 500; color: var(--text-muted); letter-spacing: 0.03em; }
+  input[type="text"], input[type="number"], select {
+    width: 100%;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    background: #FDFCFB;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input[type="text"]:focus, input[type="number"]:focus, select:focus {
+    border-color: var(--accent-mid);
+    box-shadow: 0 0 0 3px rgba(45,95,150,0.12);
+  }
+  input::placeholder { color: var(--text-faint); }
+
+  /* Entry rows */
+  .entries-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .entry-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .remove-btn {
+    width: 34px; height: 34px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--text-faint);
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.1s, color 0.1s;
+  }
+  .remove-btn:hover { background: #FBE8E8; color: var(--red); border-color: #DDB0B0; }
+
+  .add-btn {
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius);
+    padding: 9px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--accent-mid);
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    transition: background 0.1s, border-color 0.1s;
+  }
+  .add-btn:hover { background: var(--accent-light); border-color: var(--accent-mid); }
+
+  /* Results */
+  .results-section { margin-top: 2rem; }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    text-align: center;
+  }
+  .metric-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .metric-value {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .metric-value.accent { color: var(--accent); }
+  .metric-unit { font-size: 13px; color: var(--text-faint); margin-top: 3px; }
+
+  /* Breakdown table */
+  .breakdown-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  thead { background: var(--surface-2); }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #FAFAF8; }
+  th:last-child, td:last-child { text-align: right; }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 99px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .badge-q1 { background: var(--accent-light); color: var(--accent); }
+  .badge-q2 { background: var(--green-bg); color: var(--green); }
+  .badge-q3 { background: var(--amber-bg); color: var(--amber); }
+  .badge-q4 { background: var(--gray-bg); color: var(--gray); }
+
+  .pts-value {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* Empty + error states */
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-faint);
+    font-size: 14px;
+  }
+  .error-cell { color: #A03030; font-size: 12px; font-style: italic; }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--text-faint);
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  /* Print */
+  @media print {
+    body { background: #fff; }
+    header { background: #1A3A5C !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .add-btn, .remove-btn { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .ref-grid { grid-template-columns: 1fr; }
+    .entry-row { grid-template-columns: 1fr 1fr auto; }
+    .entry-row .field-group:first-child { grid-column: 1 / -1; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .summary-grid .metric:last-child { grid-column: 1 / -1; }
+    header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-eyebrow">2025–26 UHSAA Handbook · Article II. Released under Public Domain. NOTE: This is NOT endorsed by the UDCA, UHSAA, or any other debate leagues.</div>
+    <h1>Sweepstakes Points Calculator</h1>
+    <p>State Forensic Tournament — Speech &amp; Debate</p>
+    <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;background:rgba(255,255,255,0.12);color:#C8DCF0;padding:4px 10px;border-radius:99px;">CX · PF</span>
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;background:rgba(255,255,255,0.12);color:#C8DCF0;padding:4px 10px;border-radius:99px;">LD · Congress · SAD</span>
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.06em;background:rgba(255,255,255,0.12);color:#C8DCF0;padding:4px 10px;border-radius:99px;">Extemp · OO · Impromptu · Informative · Interp</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="info-banner">
+    <strong>How quartiling works:</strong> All contestants in each event are ranked by finish, then split into equal quarters. Points are awarded by quartile. Odd-numbered fields add extra slots to higher quarters. Per Section 11, any student who misses a round is <strong>ineligible</strong> for sweepstakes points.
+  </div>
+
+  <!-- Points reference -->
+  <div class="ref-section">
+    <div class="section-title">Points reference</div>
+    <div class="ref-grid">
+      <div class="ref-card">
+        <div class="ref-card-title">CX &amp; PF (Policy + Public Forum)</div>
+        <div class="ref-rows">
+          <div class="ref-row"><span class="ref-row-label">1st quarter</span><span class="ref-pts pts-10">10 pts</span></div>
+          <div class="ref-row"><span class="ref-row-label">2nd quarter</span><span class="ref-pts pts-6">6 pts</span></div>
+          <div class="ref-row"><span class="ref-row-label">3rd quarter</span><span class="ref-pts pts-2">2 pts</span></div>
+          <div class="ref-row"><span class="ref-row-label">Bottom quarter</span><span class="ref-pts pts-0">0 pts</span></div>
+        </div>
+      </div>
+      <div class="ref-card">
+        <div class="ref-card-title">Other Events (LD, Congress, SAD, Speech Events)</div>
+        <div class="ref-rows">
+          <div class="ref-row"><span class="ref-row-label">1st quarter</span><span class="ref-pts pts-5">5 pts</span></div>
+          <div class="ref-row"><span class="ref-row-label">2nd quarter</span><span class="ref-pts pts-3">3 pts</span></div>
+          <div class="ref-row"><span class="ref-row-label">3rd quarter</span><span class="ref-pts pts-1">1 pt</span></div>
+          <div class="ref-row"><span class="ref-row-label">Bottom quarter</span><span class="ref-pts pts-0">0 pts</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team name -->
+  <div class="card">
+    <div class="card-title">Team information</div>
+    <div class="field-group" style="max-width: 380px;">
+      <label for="team-name">School / team name</label>
+      <input type="text" id="team-name" placeholder="e.g. Highland High School" oninput="renderResults()" />
+    </div>
+  </div>
+
+  <!-- Entries -->
+  <div class="card">
+    <div class="card-title">Student entries</div>
+    <div class="entries-list" id="entries-list"></div>
+    <button class="add-btn" onclick="addEntry()">+ Add student entry</button>
+  </div>
+
+  <!-- Results -->
+  <div class="results-section" id="results-section" style="display:none;">
+    <div class="section-title" id="results-label">Results</div>
+
+    <div class="summary-grid">
+      <div class="metric">
+        <div class="metric-label">Total points</div>
+        <div class="metric-value accent" id="total-pts">0</div>
+        <div class="metric-unit">sweepstakes pts</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Entries</div>
+        <div class="metric-value" id="entry-count">0</div>
+        <div class="metric-unit">calculated</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Average</div>
+        <div class="metric-value" id="avg-pts">0</div>
+        <div class="metric-unit">pts / entry</div>
+      </div>
+    </div>
+
+    <div class="breakdown-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Placement</th>
+            <th>Field</th>
+            <th>Quartile</th>
+            <th>Points</th>
+          </tr>
+        </thead>
+        <tbody id="breakdown-body"></tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<footer>
+  UHSAA 2025–26 Handbook · Speech/Debate · Article II – Sweepstakes Points
+</footer>
+
+<script>
+  const EVENT_TYPES = [
+    { value: 'cx',         label: 'CX — Cross-Examination Policy',       group: 'cxpf'  },
+    { value: 'pf',         label: 'PF — Public Forum',                   group: 'cxpf'  },
+    { value: 'ld',         label: 'LD — Lincoln-Douglas',                group: 'other' },
+    { value: 'congress',   label: 'Congress',                            group: 'other' },
+    { value: 'sad',        label: 'Spontaneous Argumentation Debate',    group: 'other' },
+    { value: 'fextemp',    label: 'Foreign Extemp',                      group: 'other' },
+    { value: 'nextemp',    label: 'National Extemp',                     group: 'other' },
+    { value: 'oo',         label: 'Original Oratory',                    group: 'other' },
+    { value: 'impromptu',  label: 'Impromptu',                           group: 'other' },
+    { value: 'informative',label: 'Informative',                         group: 'other' },
+    { value: 'hi',         label: 'Humorous Interpretation',             group: 'other' },
+    { value: 'di',         label: 'Dramatic Interpretation',             group: 'other' },
+    { value: 'other',      label: 'Other event',                         group: 'other' },
+  ];
+
+  const POINTS = { cxpf: [10, 6, 2, 0], other: [5, 3, 1, 0] };
+
+  let entries = [];
+  let idCounter = 0;
+
+  function getQuartile(place, total) {
+    if (!place || !total || place < 1 || total < 1 || place > total) return null;
+    let boundaries = [], cum = 0, rem = total % 4;
+    for (let i = 0; i < 4; i++) {
+      let size = Math.floor(total / 4);
+      if (i < rem) size++;
+      cum += size;
+      boundaries.push(cum);
+    }
+    if (place <= boundaries[0]) return 1;
+    if (place <= boundaries[1]) return 2;
+    if (place <= boundaries[2]) return 3;
+    return 4;
+  }
+
+  function getPoints(evtType, q) {
+    if (q === null) return null;
+    const group = EVENT_TYPES.find(e => e.value === evtType)?.group || 'other';
+    return POINTS[group][q - 1];
+  }
+
+  function addEntry() {
+    const id = ++idCounter;
+    entries.push({ id, type: 'cx', place: '', total: '' });
+    renderEntries();
+  }
+
+  function removeEntry(id) {
+    entries = entries.filter(e => e.id !== id);
+    renderEntries();
+    renderResults();
+  }
+
+  function updateEntry(id, field, value) {
+    const e = entries.find(e => e.id === id);
+    if (!e) return;
+    e[field] = field === 'type' ? value : (value === '' ? '' : parseInt(value, 10));
+    renderResults();
+  }
+
+  function renderEntries() {
+    const list = document.getElementById('entries-list');
+    if (entries.length === 0) {
+      list.innerHTML = '<div class="empty-state">No entries yet — click "+ Add student entry" to begin.</div>';
+      document.getElementById('results-section').style.display = 'none';
+      return;
+    }
+    list.innerHTML = entries.map(e => `
+      <div class="entry-row">
+        <div class="field-group">
+          <label>Event type</label>
+          <select onchange="updateEntry(${e.id},'type',this.value)">
+            <optgroup label="Debate — CX / PF (10/6/2/0 pts)">
+              <option value="cx"  ${e.type==='cx' ?'selected':''}>CX — Cross-Examination Policy</option>
+              <option value="pf"  ${e.type==='pf' ?'selected':''}>PF — Public Forum</option>
+            </optgroup>
+            <optgroup label="Debate — Other (5/3/1/0 pts)">
+              <option value="ld"        ${e.type==='ld'       ?'selected':''}>LD — Lincoln-Douglas</option>
+              <option value="congress"  ${e.type==='congress' ?'selected':''}>Congress</option>
+              <option value="sad"       ${e.type==='sad'      ?'selected':''}>Spontaneous Argumentation Debate</option>
+            </optgroup>
+            <optgroup label="Speech Events (5/3/1/0 pts)">
+              <option value="fextemp"    ${e.type==='fextemp'    ?'selected':''}>Foreign Extemp</option>
+              <option value="nextemp"    ${e.type==='nextemp'    ?'selected':''}>National Extemp</option>
+              <option value="oo"         ${e.type==='oo'         ?'selected':''}>Original Oratory</option>
+              <option value="impromptu"  ${e.type==='impromptu'  ?'selected':''}>Impromptu</option>
+              <option value="informative"${e.type==='informative'?'selected':''}>Informative</option>
+              <option value="hi"         ${e.type==='hi'         ?'selected':''}>Humorous Interpretation</option>
+              <option value="di"         ${e.type==='di'         ?'selected':''}>Dramatic Interpretation</option>
+            </optgroup>
+            <optgroup label="Other">
+              <option value="other" ${e.type==='other'?'selected':''}>Other event</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Placement</label>
+          <input type="number" min="1" placeholder="e.g. 3" value="${e.place}" oninput="updateEntry(${e.id},'place',this.value)" />
+        </div>
+        <div class="field-group">
+          <label>Field size</label>
+          <input type="number" min="1" placeholder="e.g. 24" value="${e.total}" oninput="updateEntry(${e.id},'total',this.value)" />
+        </div>
+        <button class="remove-btn" onclick="removeEntry(${e.id})" title="Remove entry">×</button>
+      </div>
+    `).join('');
+    renderResults();
+  }
+
+  function badgeHTML(q) {
+    const map = {
+      1: ['badge-q1', '1st quarter'],
+      2: ['badge-q2', '2nd quarter'],
+      3: ['badge-q3', '3rd quarter'],
+      4: ['badge-q4', 'Bottom quarter'],
+    };
+    return `<span class="badge ${map[q][0]}">${map[q][1]}</span>`;
+  }
+
+  function renderResults() {
+    const valid = entries.filter(e => e.place !== '' && e.total !== '' && !isNaN(e.place) && !isNaN(e.total));
+    if (valid.length === 0) {
+      document.getElementById('results-section').style.display = 'none';
+      return;
+    }
+    document.getElementById('results-section').style.display = 'block';
+
+    const teamName = document.getElementById('team-name').value.trim();
+    document.getElementById('results-label').textContent = teamName ? `Results — ${teamName}` : 'Results';
+
+    let total = 0, count = 0, rows = '';
+    valid.forEach(e => {
+      const q = getQuartile(e.place, e.total);
+      const pts = getPoints(e.type, q);
+      if (pts === null) return;
+      total += pts;
+      count++;
+      const label = EVENT_TYPES.find(t => t.value === e.type)?.label || e.type;
+      rows += `<tr>
+        <td>${label}</td>
+        <td>${e.place} of ${e.total}</td>
+        <td>${e.total}</td>
+        <td>${badgeHTML(q)}</td>
+        <td><span class="pts-value">${pts}</span></td>
+      </tr>`;
+    });
+
+    document.getElementById('total-pts').textContent = total;
+    document.getElementById('entry-count').textContent = count;
+    document.getElementById('avg-pts').textContent = count > 0 ? (total / count).toFixed(1) : '0';
+    document.getElementById('breakdown-body').innerHTML = rows || '<tr><td colspan="5" class="empty-state">Fill in placement and field size to see results.</td></tr>';
+  }
+
+  // Start with two blank entries
+  addEntry();
+  addEntry();
+</script>
+
+</body>
+</html>
